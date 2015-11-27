@@ -2,78 +2,82 @@
 
 #### Table of Contents
 
-1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with linuxptp](#setup)
+1. [Module Description](#module-description)
+2. [Setup](#setup)
     * [What linuxptp affects](#what-linuxptp-affects)
     * [Setup requirements](#setup-requirements)
     * [Beginning with linuxptp](#beginning-with-linuxptp)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
-
-## Overview
-
-A one-maybe-two sentence summary of what the module does/what problem it solves.
-This is your 30 second elevator pitch for your module. Consider including
-OS/Puppet version it works with.
+3. [Usage](#usage)
+4. [Limitations](#limitations)
+5. [Development](#development)
 
 ## Module Description
 
-If applicable, this section should have a brief description of the technology
-the module integrates with and what that integration enables. This section
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?"
-
-If your module has a range of functionality (installation, configuration,
-management, etc.) this is the time to mention it.
+The linuxptp module manages the Linux PTP Project software (http://linuxptp.sourceforge.net/),
+an implementation of the Precision Time Protocol.
 
 ## Setup
 
 ### What linuxptp affects
 
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute on the system it's installed on.
-* This is a great place to stick any warnings.
-* Can be in list or paragraph form.
+* Installs the linuxptp package
+* Can configure one or multiple ptp4l instances
+* Can manage the ptp4l and phc2sys services, but best run with Supervisor
 
-### Setup Requirements **OPTIONAL**
+### Setup Requirements
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
+The linuxptp package can be found in a number of repositories, CentOS 6 has version 1.4.
+Personally I recommend at least version 1.6.
 
 ### Beginning with linuxptp
 
-The very basic steps needed for a user to get the module up and running.
+The linuxptp package contains three binaries, ptp4l, phc2sys and timemaster. This module
+manages ptp4l and phc2sys only. ptp4l can be run as a PTP Ordinary or Boundary Clock, and
+phc2sys is used to synchronise one clock with another in a system.
 
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you may wish to include an additional section here: Upgrading
-(For an example, see http://forge.puppetlabs.com/puppetlabs/firewall).
+The linuxptp software needs to heavily configured for your environment. A good starting point
+is the [project page](http://linuxptp.sourceforge.net/), then the man pages, and you'll need
+a reasonable understanding of PTP as well.
+
+The module is designed to be friendly for running multiple ptp4l and phc2sys instances
+on the one box using a program like Supervisor. It does this by adding extra config and run
+directories so the instances don't step on each other.
+
+You can use the normal services however you will need to take care of getting the right
+configuration file and arguments to the right daemons. In Red Hat land this is the
+/etc/sysconfig/ptp4l and /etc/sysconfig/phc2sys files, which this module does not manage.
+
+I personally run the software instances with [ajcrowe-supervisord](https://github.com/ajcrowe/puppet-supervisord),
+I have an example of this on a [blog post](http://catach.blogspot.co.uk/2015/11/solving-mifid-ii-clock-synchronisation_28.html).
 
 ## Usage
 
-Put the classes, types, and resources for customizing, configuring, and doing
-the fancy stuff with your module here.
+Stop the standard linuxptp services, create a configuration file for a ptp4l instance, and run two supervisord programs,
+one for ptp4l and one to synchronise the eth0 clock to eth1:
 
-## Reference
-
-Here, list the classes, types, providers, facts, etc contained in your module.
-This section should include all of the under-the-hood workings of your module so
-people know what the module is touching on their system but don't need to mess
-with things. (We are working on automating this section!)
+~~~ puppet
+class { 'linuxptp':
+  ptp4l_service_ensure   => 'stopped',
+  ptp4l_service_enable   => false,
+  phc2sys_service_ensure => 'stopped',
+  phc2sys_service_enable => false,
+}
+linuxptp::ptp4l { 'master-clock':
+  interfaces => [ 'eth0', 'eth1' ],
+}
+supervisord::program { 'master-clock':
+  command => '/usr/sbin/ptp4l -f /etc/ptp4l/master-clock.conf',
+}
+supervisord::program { 'clock-sync':
+  command => '/usr/sbin/phc2sys -s eth0 -c eth1 -w -z /var/run/ptp4l/master-clock',
+}
+~~~
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc.
+The module is tested against CentOS 6. It should work in most other flavours, and I'm
+happy to accept pull requests for other distros.
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
-
-## Release Notes/Contributors/Etc **Optional**
-
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You may also add any additional sections you feel are
-necessary or important to include here. Please use the `## ` header.
+We will accept pull requests from GitHub.
