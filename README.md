@@ -73,6 +73,31 @@ supervisord::program { 'clock-sync':
 }
 ~~~
 
+### Logging
+
+By default the module uses [rodjek-logrotate](https://github.com/rodjek/puppet-logrotate.git) to rotate
+log files under /var/log/linuxptp. You can disable this like so:
+
+~~~ puppet
+class { 'linuxptp':
+  manage_logrotate_rule => false,
+}
+~~~
+
+Both ptp4l and phc2sys will take the -q (suppress syslog) and -m (write to stdout).
+You can then use supervisord's logging facilities to send output to the common log
+directory:
+
+~~~ puppet
+supervisord::program { 'clock-sync':
+  command => '/usr/sbin/phc2sys -q -m -s eth0 -c eth1 -w -z /var/run/ptp4l/master-clock',
+  stdout_logfile          => '/var/log/linuxptp/clock-sync.log',
+  redirect_stderr         => true,
+  stdout_logfile_maxbytes => 0,
+  stdout_logfile_backups  => 0,
+}
+~~~
+
 ## Limitations
 
 The module is tested against CentOS 6. It should work in most other flavours, and I'm
