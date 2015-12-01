@@ -44,12 +44,12 @@ describe 'linuxptp::ptp4l' do
     it { expect { should compile }.to raise_error(/Parameter 'network_transport' must be one of/) }
   end
 
-  context 'with clock_servo=linear' do
+  context 'with clock_servo=linreg' do
     let (:params) {{
       :interfaces        => [ 'eth0' ],
-      :clock_servo => 'linear'
+      :clock_servo => 'linreg'
     }}
-    it { should contain_file('/etc/ptp4l/test.conf').with_content(/^clock_servo\s+linear$/) }
+    it { should contain_file('/etc/ptp4l/test.conf').with_content(/^clock_servo\s+linreg$/) }
   end
 
   context 'with bad clock_servo' do
