@@ -9,6 +9,7 @@ describe 'linuxptp::ptp4l' do
       :interfaces => [ 'eth0' ],
     }}
     it { should contain_file('/etc/ptp4l/test.conf').with_content(/^\[eth0\]/) }
+    it { should contain_file('/etc/ptp4l/test.conf').with_content(/^clock_servo\s+pi$/) }
   end
 
   context 'with slave_only=1' do
@@ -41,5 +42,21 @@ describe 'linuxptp::ptp4l' do
       :network_transport => 'broken',
     }}
     it { expect { should compile }.to raise_error(/Parameter 'network_transport' must be one of/) }
+  end
+
+  context 'with clock_servo=linear' do
+    let (:params) {{
+      :interfaces        => [ 'eth0' ],
+      :clock_servo => 'linear'
+    }}
+    it { should contain_file('/etc/ptp4l/test.conf').with_content(/^clock_servo\s+linear$/) }
+  end
+
+  context 'with bad clock_servo' do
+    let (:params) {{
+      :interfaces        => [ 'eth0' ],
+      :clock_servo => 'foo'
+    }}
+    it { expect { should compile }.to raise_error(/Parameter 'clock_servo' must be one of/) }
   end
 end
