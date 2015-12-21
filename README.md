@@ -73,6 +73,18 @@ supervisord::program { 'clock-sync':
 }
 ~~~
 
+### Multicast Time To Live (TTL)
+
+By default ptp4l will multicast packets with a TTL of 1. Certain brands of firewall (eg: Fortinet) will not forward
+multicast with a TTL of 1, so you need to set it higher:
+
+~~~ puppet
+linuxptp::ptp4l { 'master-clock':
+  interfaces => [ 'eth0' ],
+  ptp_ttl    => 2,
+}
+~~~
+
 ### Logging
 
 By default the module uses [rodjek-logrotate](https://github.com/rodjek/puppet-logrotate.git) to rotate

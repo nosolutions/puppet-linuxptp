@@ -46,7 +46,7 @@ describe 'linuxptp::ptp4l' do
 
   context 'with clock_servo=linreg' do
     let (:params) {{
-      :interfaces        => [ 'eth0' ],
+      :interfaces  => [ 'eth0' ],
       :clock_servo => 'linreg'
     }}
     it { should contain_file('/etc/ptp4l/test.conf').with_content(/^clock_servo\s+linreg$/) }
@@ -54,9 +54,25 @@ describe 'linuxptp::ptp4l' do
 
   context 'with bad clock_servo' do
     let (:params) {{
-      :interfaces        => [ 'eth0' ],
+      :interfaces  => [ 'eth0' ],
       :clock_servo => 'foo'
     }}
     it { expect { should compile }.to raise_error(/Parameter 'clock_servo' must be one of/) }
+  end
+
+  context 'with udp_ttl=2' do
+    let (:params) {{
+      :interfaces => [ 'eth0' ],
+      :udp_ttl    => 2
+    }}
+    it { should contain_file('/etc/ptp4l/test.conf').with_content(/^udp_ttl\s+2$/) }
+  end
+
+  context 'with invalid udp_ttl' do
+    let (:params) {{
+      :interfaces => [ 'eth0' ],
+      :udp_ttl    => 'foo'
+    }}
+    it { expect { should compile }.to raise_error(/Expected first argument to be a Numeric/) }
   end
 end

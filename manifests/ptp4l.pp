@@ -8,6 +8,7 @@ define linuxptp::ptp4l(
   $slave_only        = 0,
   $hybrid_e2e        = 0,
   $clock_servo       = 'pi',
+  $udp_ttl           = 1,
 ) {
   include ::linuxptp
 
@@ -16,6 +17,7 @@ define linuxptp::ptp4l(
   validate_numeric($hybrid_e2e, 1, 0)
   validate_re($network_transport, ['UDPv4', 'UDPv6', 'L2'], "Parameter 'network_transport' must be one of 'UDPv4', 'UDPv6' or 'L2'")
   validate_re($clock_servo, ['pi', 'linreg', 'ntpshm', 'nullf'], "Parameter 'clock_servo' must be one of 'pi', 'linreg', 'ntpshm' or 'nullf'")
+  validate_numeric($udp_ttl, 1024, 1)
 
   file { "${::linuxptp::ptp4l_confdir}/${name}.conf":
     ensure  => file,
