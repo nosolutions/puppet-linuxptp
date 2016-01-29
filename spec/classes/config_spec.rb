@@ -12,7 +12,7 @@ describe 'linuxptp::config' do
       'copytruncate' => true,
       'missingok'    => true,
       'rotate_every' => 'day',
-      'rotate'       => 7,
+      'rotate'       => 7
     )}
   end
 
