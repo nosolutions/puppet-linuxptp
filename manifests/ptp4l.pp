@@ -13,6 +13,7 @@ define linuxptp::ptp4l(
   $logSyncInterval         = 0,
   $logMinDelayReqInterval  = 0,
   $logMinPdelayReqInterval = 0,
+  $delay_mechanism         = "E2E",
 ) {
   include ::linuxptp
 

@@ -16,7 +16,7 @@ freq_est_interval	1
 # Port Data Set
 #
 logAnnounceInterval	<%= @logAnnounceInterval %>
-logSyncInterval	<%= @logSyncInterval %>
+logSyncInterval		<%= @logSyncInterval %>
 logMinDelayReqInterval	<%= @logMinDelayReqInterval %>
 logMinPdelayReqInterval	<%= @logMinPdelayReqInterval %>
 announceReceiptTimeout	3
@@ -68,7 +68,7 @@ uds_address		/var/run/ptp4l/<%= @name %>
 # Default interface options
 #
 network_transport	<%= @network_transport %>
-delay_mechanism		E2E
+delay_mechanism		<%= @delay_mechanism %>
 time_stamping		hardware
 tsproc_mode		filter
 delay_filter		moving_median
