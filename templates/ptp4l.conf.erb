@@ -69,7 +69,7 @@ uds_address		/var/run/ptp4l/<%= @name %>
 #
 network_transport	<%= @network_transport %>
 delay_mechanism		<%= @delay_mechanism %>
-time_stamping		hardware
+time_stamping		<%= @time_stamping %>
 tsproc_mode		filter
 delay_filter		moving_median
 delay_filter_length	10
