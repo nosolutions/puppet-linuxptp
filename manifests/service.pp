@@ -4,6 +4,7 @@ class linuxptp::service inherits linuxptp {
     enable     => $ptp4l_service_enable,
     hasstatus  => true,
     hasrestart => true,
+    require    => Package[$linuxptp::package_name]
   }
 
   service { $phc2sys_service_name:
@@ -11,5 +12,6 @@ class linuxptp::service inherits linuxptp {
     enable     => $phc2sys_service_enable,
     hasstatus  => true,
     hasrestart => true,
+    require    => Package[$linuxptp::package_name]
   }
 }
