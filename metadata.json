@@ -8,7 +8,8 @@
   "project_page": null,
   "issues_url": null,
   "dependencies": [
-    {"name":"puppetlabs-stdlib","version_requirement":"= 4.13.1"}
+    {"name":"puppetlabs-stdlib","version_requirement":"= 4.13.1"},
+    {"name":"voxpupuli-logrotate","version_requirement":"= v2.0.0"}
   ]
 }
 
