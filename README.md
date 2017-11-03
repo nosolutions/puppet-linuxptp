@@ -1,5 +1,7 @@
 # linuxptp
 
+[![Build Status](https://img.shields.io/travis/LMAX-Exchange/puppet-linuxptp.svg)](https://travis-ci.org/LMAX-Exchange/puppet-linuxptp)
+
 #### Table of Contents
 
 1. [Module Description](#module-description)
