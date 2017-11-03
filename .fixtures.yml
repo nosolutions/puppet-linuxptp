@@ -1,6 +1,8 @@
 fixtures:
   repositories:
-    stdlib: 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
+    stdlib:
+      repo: 'https://github.com/puppetlabs/puppetlabs-stdlib.git'
+      ref: '4.13.1'
     logrotate: 'https://github.com/rodjek/puppet-logrotate.git'
   symlinks:
     linuxptp: "#{source_dir}"
