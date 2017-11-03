@@ -69,7 +69,7 @@ group :development, :unit_tests do
   gem 'jwt', '1.5.6',                                               :require => false if RUBY_VERSION.to_f <= 1.9
   gem 'google-api-client', '0.9.4',                                 :require => false if RUBY_VERSION.to_f <= 1.9
   gem 'net-ssh', '2.9.4',                                           :require => false if RUBY_VERSION.to_f <= 1.9
-  gem 'beaker', '3.0.0',                                            :require => false if RUBY_VERSION.to_f <= 2.2
+  gem 'beaker', '2.52.0',                                           :require => false if RUBY_VERSION.to_f <= 2.2
 end
 
 group :system_tests do
