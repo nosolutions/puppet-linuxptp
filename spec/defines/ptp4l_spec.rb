@@ -88,12 +88,11 @@ describe 'linuxptp::ptp4l' do
         let(:params) {{ :interfaces => [ 'eth0' ], :logMinPdelayReqInterval => 'foo', }}
         it { expect { should compile }.to raise_error(/Expected first argument to be a Numeric/) }
       end
+      context 'with two interfaces' do
+        let(:params) {{ :interfaces => [ 'eth0', 'eth1' ], }}
+        it { should contain_file('/etc/sysconfig/ptp4l').with_content(/ -i eth0 -i eth1/) }
+        it { should contain_file('/etc/sysconfig/ptp4l').with_content(/-f \/etc\/ptp4l\/test.conf /) }
+      end
     end
-  end
-
-  context 'with two interfaces' do
-    let(:params) {{ :interfaces => [ 'eth0', 'eth1' ], }}
-    it { should contain_file('/etc/sysconfig/ptp4l').with_content(/ -i eth0 -i eth1/) }
-    it { should contain_file('/etc/sysconfig/ptp4l').with_content(/-f \/etc\/ptp4l\/test.conf /) }
   end
 end
