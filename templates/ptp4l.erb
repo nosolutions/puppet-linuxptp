@@ -1,0 +1,2 @@
+OPTIONS="-f <%= scope.lookupvar("linuxptp::ptp4l_confdir") %>/<%= @name %>.conf <% @interfaces.sort.each do |interface| -%>
+-i <%= interface -%> <% end -%>"
