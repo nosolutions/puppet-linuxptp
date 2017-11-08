@@ -15,6 +15,7 @@ define linuxptp::ptp4l(
   $logMinPdelayReqInterval = 0,
   $delay_mechanism         = "E2E",
   $time_stamping           = "hardware",
+  $manage_sysconfig        = false,
 ) {
   include ::linuxptp
 
@@ -37,13 +38,14 @@ define linuxptp::ptp4l(
     notify  => Service[$linuxptp::ptp4l_service_name],
   }
 
-  file { "/etc/sysconfig/ptp4l":
-    ensure  => file,
-    content => template("${module_name}/ptp4l.erb"),
-    notify  => [
-      Service[$linuxptp::ptp4l_service_name],
-      Service[$linuxptp::phc2sys_service_name],
-    ],
+  if ($manage_sysconfig) {
+    file { "/etc/sysconfig/ptp4l":
+      ensure  => file,
+      content => template("${module_name}/ptp4l.erb"),
+      notify  => [
+        Service[$linuxptp::ptp4l_service_name],
+        Service[$linuxptp::phc2sys_service_name],
+      ],
+    }
   }
-
 }

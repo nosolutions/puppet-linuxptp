@@ -47,12 +47,15 @@ directories so the instances don't step on each other.
 
 You can use the normal services however you will need to take care of getting the right
 configuration file and arguments to the right daemons. In Red Hat land this is the
-/etc/sysconfig/ptp4l and /etc/sysconfig/phc2sys files, which this module does not manage.
+`/etc/sysconfig/ptp4l` and `/etc/sysconfig/phc2sys` files. This module can manage `/etc/sysconfig/ptp4l`
+but not `/etc/sysconfig/phc2sys`.
 
 I personally run the software instances with [ajcrowe-supervisord](https://github.com/ajcrowe/puppet-supervisord),
 I have an example of this on a [blog post](http://catach.blogspot.co.uk/2015/11/solving-mifid-ii-clock-synchronisation_28.html).
 
 ## Usage
+
+### Multiple Instances with Supervisord
 
 Stop the standard linuxptp services, create a configuration file for a ptp4l instance, and run two supervisord programs,
 one for ptp4l and one to synchronise the eth0 clock to eth1:
@@ -72,6 +75,16 @@ supervisord::program { 'master-clock':
 }
 supervisord::program { 'clock-sync':
   command => '/usr/sbin/phc2sys -s eth0 -c eth1 -w -z /var/run/ptp4l/master-clock',
+}
+~~~
+
+### Single Instance
+
+~~~ puppet
+class { 'linuxptp': }
+linuxptp::ptp4l { 'master-clock':
+  interfaces       => [ 'eth0' ],
+  manage_sysconfig => true,
 }
 ~~~
 
