@@ -34,5 +34,16 @@ define linuxptp::ptp4l(
   file { "${::linuxptp::ptp4l_confdir}/${name}.conf":
     ensure  => file,
     content => template("${module_name}/ptp4l.conf.erb"),
+    notify  => Service[$linuxptp::ptp4l_service_name],
   }
+
+  file { "/etc/sysconfig/ptp4l":
+    ensure  => file,
+    content => template("${module_name}/ptp4l.erb"),
+    notify  => [
+      Service[$linuxptp::ptp4l_service_name],
+      Service[$linuxptp::phc2sys_service_name],
+    ],
+  }
+
 }
