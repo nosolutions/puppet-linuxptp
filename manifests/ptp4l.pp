@@ -16,6 +16,7 @@ define linuxptp::ptp4l(
   $delay_mechanism         = "E2E",
   $time_stamping           = "hardware",
   $manage_sysconfig        = false,
+  $summary_interval        = 0,
 ) {
   include ::linuxptp
 
