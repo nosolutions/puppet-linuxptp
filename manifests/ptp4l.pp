@@ -4,19 +4,20 @@
 #instance is best done with supervisord.
 define linuxptp::ptp4l(
   $interfaces,
-  $network_transport       = 'UDPv4',
-  $slave_only              = 0,
-  $hybrid_e2e              = 0,
-  $clock_servo             = 'pi',
-  $udp_ttl                 = 1,
-  $logAnnounceInterval     = 1,
-  $logSyncInterval         = 0,
-  $logMinDelayReqInterval  = 0,
-  $logMinPdelayReqInterval = 0,
-  $delay_mechanism         = "E2E",
-  $time_stamping           = "hardware",
-  $manage_sysconfig        = false,
-  $summary_interval        = 0,
+  $network_transport           = 'UDPv4',
+  $slave_only                  = 0,
+  $hybrid_e2e                  = 0,
+  $clock_servo                 = 'pi',
+  $udp_ttl                     = 1,
+  $log_announce_interval       = 1,
+  $log_sync_interval           = 0,
+  $log_min_delay_req_interval  = 0,
+  $log_min_pdelay_req_interval = 0,
+  $delay_mechanism             = 'E2E',
+  $time_stamping               = 'hardware',
+  $manage_sysconfig            = false,
+  $summary_interval            = 0,
+  $filename                    = undef,
 ) {
   include ::linuxptp
 
@@ -28,25 +29,16 @@ define linuxptp::ptp4l(
   validate_re($delay_mechanism, ['E2E', 'P2P'], "Parameter 'delay_mechanism' must be one of 'E2E' or 'P2P'")
   validate_re($time_stamping, ['hardware', 'software'], "Parameter 'time_stamping' must be one of 'hardware' or 'software'")
   validate_numeric($udp_ttl, 1024, 1)
-  validate_numeric($logAnnounceInterval, 16, -8)
-  validate_numeric($logSyncInterval, 16, -8)
-  validate_numeric($logMinDelayReqInterval, 16, -8)
-  validate_numeric($logMinPdelayReqInterval, 16, -8)
+  validate_numeric($log_announce_interval, 16, -8)
+  validate_numeric($log_sync_interval, 16, -8)
+  validate_numeric($log_min_delay_req_interval, 16, -8)
+  validate_numeric($log_min_pdelay_req_interval, 16, -8)
 
-  file { "${::linuxptp::ptp4l_confdir}/${name}.conf":
+  $real_filename = pick($filename, "${::linuxptp::ptp4l_confdir}/${name}.conf")
+
+  file { $real_filename:
     ensure  => file,
     content => template("${module_name}/ptp4l.conf.erb"),
     notify  => Service[$linuxptp::ptp4l_service_name],
-  }
-
-  if ($manage_sysconfig) {
-    file { "/etc/sysconfig/ptp4l":
-      ensure  => file,
-      content => template("${module_name}/ptp4l.erb"),
-      notify  => [
-        Service[$linuxptp::ptp4l_service_name],
-        Service[$linuxptp::phc2sys_service_name],
-      ],
-    }
   }
 }

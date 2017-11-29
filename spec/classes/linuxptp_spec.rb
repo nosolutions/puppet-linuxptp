@@ -5,8 +5,14 @@ describe 'linuxptp' do
       let(:facts) do
         facts.merge({})
       end
+      let(:params) do
+        { }
+      end
 
-      context 'with defaults for all parameters' do
+      context 'single instance defaults for all parameters' do
+        let(:params) do
+          super().merge({})
+        end
         it { should compile }
         it { should contain_class('linuxptp') }
         it { should contain_class('linuxptp::params') }
@@ -33,11 +39,15 @@ describe 'linuxptp' do
         it { should contain_service('phc2sys').with_enable(true) }
 
         context 'with manage_logrotate_rule=false' do
-          let (:params) {{
-            :manage_logrotate_rule => false
-          }}
+          let(:params) do
+             super().merge(manage_logrotate_rule: false)
+          end
           it { should_not contain_logrotate__rule('linuxptp') }
         end
+      end
+
+      context 'multi instance defaults' do
+
       end
     end
   end
