@@ -41,19 +41,22 @@ The linuxptp software needs to heavily configured for your environment. A good s
 is the [project page](http://linuxptp.sourceforge.net/), then the man pages, and you'll need
 a reasonable understanding of PTP as well.
 
-The module is designed to be friendly for running multiple ptp4l and phc2sys instances
-on the one box using a program like Supervisor. It does this by adding extra config and run
-directories so the instances don't step on each other.
+The module is designed to be usable in "single instance" mode, which is the standard services
+and config file locaitons, as well as "multi instance" which allows for running multiple ptp4l and
+phc2sys processes at once. 
 
-You can use the normal services however you will need to take care of getting the right
-configuration file and arguments to the right daemons. In Red Hat land this is the
-`/etc/sysconfig/ptp4l` and `/etc/sysconfig/phc2sys` files. This module can manage `/etc/sysconfig/ptp4l`
-but not `/etc/sysconfig/phc2sys`.
-
-I personally run the software instances with [ajcrowe-supervisord](https://github.com/ajcrowe/puppet-supervisord),
-I have an example of this on a [blog post](http://catach.blogspot.co.uk/2015/11/solving-mifid-ii-clock-synchronisation_28.html).
+I've run the multiple instances with [ajcrowe-supervisord](https://github.com/ajcrowe/puppet-supervisord)
+in the past, I have an example of this on a [blog post](http://catach.blogspot.co.uk/2015/11/solving-mifid-ii-clock-synchronisation_28.html).
 
 ## Usage
+
+### Single Instance
+
+~~~ puppet
+class { 'linuxptp': 
+  interfaces => [ 'eth0' ],
+}
+~~~
 
 ### Multiple Instances with Supervisord
 
@@ -62,29 +65,19 @@ one for ptp4l and one to synchronise the eth0 clock to eth1:
 
 ~~~ puppet
 class { 'linuxptp':
-  ptp4l_service_ensure   => 'stopped',
-  ptp4l_service_enable   => false,
-  phc2sys_service_ensure => 'stopped',
-  phc2sys_service_enable => false,
+  single_instance => false,
 }
 linuxptp::ptp4l { 'master-clock':
-  interfaces => [ 'eth0', 'eth1' ],
+  interfaces => [ 'eth0' ],
+}
+linuxptp::ptp4l { 'another-clock':
+  interfaces => [ 'eth1' ],
 }
 supervisord::program { 'master-clock':
   command => '/usr/sbin/ptp4l -f /etc/ptp4l/master-clock.conf',
 }
 supervisord::program { 'clock-sync':
   command => '/usr/sbin/phc2sys -s eth0 -c eth1 -w -z /var/run/ptp4l/master-clock',
-}
-~~~
-
-### Single Instance
-
-~~~ puppet
-class { 'linuxptp': }
-linuxptp::ptp4l { 'master-clock':
-  interfaces       => [ 'eth0' ],
-  manage_sysconfig => true,
 }
 ~~~
 
@@ -102,7 +95,9 @@ linuxptp::ptp4l { 'master-clock':
 
 ### Logging
 
-By default the module uses [rodjek-logrotate](https://github.com/rodjek/puppet-logrotate.git) to rotate
+Single instance mode defaults to syslog.
+
+Multi instance mode uses [rodjek-logrotate](https://github.com/rodjek/puppet-logrotate.git) to rotate
 log files under /var/log/linuxptp. You can disable this like so:
 
 ~~~ puppet
