@@ -4,6 +4,7 @@
 #instance is best done with supervisord.
 define linuxptp::ptp4l(
   $interfaces,
+  $filename                    = undef,
   $network_transport           = 'UDPv4',
   $slave_only                  = 0,
   $hybrid_e2e                  = 0,
@@ -15,12 +16,9 @@ define linuxptp::ptp4l(
   $log_min_pdelay_req_interval = 0,
   $delay_mechanism             = 'E2E',
   $time_stamping               = 'hardware',
-  $manage_sysconfig            = false,
   $summary_interval            = 0,
-  $filename                    = undef,
+  $ptp4l_confdir               = '/etc/ptp4l',
 ) {
-  include ::linuxptp
-
   validate_array($interfaces)
   validate_numeric($slave_only, 1, 0)
   validate_numeric($hybrid_e2e, 1, 0)
@@ -34,11 +32,10 @@ define linuxptp::ptp4l(
   validate_numeric($log_min_delay_req_interval, 16, -8)
   validate_numeric($log_min_pdelay_req_interval, 16, -8)
 
-  $real_filename = pick($filename, "${::linuxptp::ptp4l_confdir}/${name}.conf")
+  $real_filename = pick($filename, "${ptp4l_confdir}/${name}.conf")
 
   file { $real_filename:
     ensure  => file,
     content => template("${module_name}/ptp4l.conf.erb"),
-    notify  => Service[$linuxptp::ptp4l_service_name],
   }
 }
