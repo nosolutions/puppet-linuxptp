@@ -52,6 +52,7 @@ class linuxptp(
       }
     }
     linuxptp::ptp4l { 'default':
+      single_instance             => $single_instance,
       filename                    => $conf_file,
       interfaces                  => $interfaces,
       network_transport           => $network_transport,

@@ -4,6 +4,7 @@
 #instance is best done with supervisord.
 define linuxptp::ptp4l(
   $interfaces,
+  $single_instance             = false,
   $filename                    = undef,
   $network_transport           = 'UDPv4',
   $slave_only                  = 0,
