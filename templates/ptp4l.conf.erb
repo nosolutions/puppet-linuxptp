@@ -88,6 +88,10 @@ revisionData		;;
 manufacturerIdentity	00:00:00
 userDescription		;
 timeSource		0xA0
+#
+<% if message_tag != '' -%>
+message_tag         <%= @message_tag %>
+<% end -%>
 
 <% @interfaces.sort.each do |interface| -%>
 [<%= interface %>]

@@ -19,6 +19,7 @@ define linuxptp::ptp4l(
   $time_stamping               = 'hardware',
   $summary_interval            = 0,
   $ptp4l_confdir               = '/etc/ptp4l',
+  $message_tag                 = '',
 ) {
   validate_array($interfaces)
   validate_numeric($slave_only, 1, 0)
