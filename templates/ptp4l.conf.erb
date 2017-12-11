@@ -15,10 +15,10 @@ freq_est_interval	1
 #
 # Port Data Set
 #
-logAnnounceInterval	<%= @logAnnounceInterval %>
-logSyncInterval		<%= @logSyncInterval %>
-logMinDelayReqInterval	<%= @logMinDelayReqInterval %>
-logMinPdelayReqInterval	<%= @logMinPdelayReqInterval %>
+logAnnounceInterval	<%= @log_announce_interval %>
+logSyncInterval		<%= @log_sync_interval %>
+logMinDelayReqInterval	<%= @log_min_delay_req_interval %>
+logMinPdelayReqInterval	<%= @log_min_pdelay_req_interval %>
 announceReceiptTimeout	3
 syncReceiptTimeout	0
 delayAsymmetry		0
@@ -63,7 +63,11 @@ ptp_dst_mac		01:1B:19:00:00:00
 p2p_dst_mac		01:80:C2:00:00:0E
 udp_ttl			<%= @udp_ttl %>
 udp6_scope		0x0E
+<% if @single_instance -%>
+uds_address		/var/run/ptp4l
+<% else -%>
 uds_address		/var/run/ptp4l/<%= @name %>
+<% end -%>
 #
 # Default interface options
 #
