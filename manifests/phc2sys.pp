@@ -4,6 +4,7 @@
 class linuxptp::phc2sys(
   $summary_updates = 0,
   $uds_name        = 'ptp4l'
+  $message_tag     = '',
 ) {
   include ::linuxptp
 
