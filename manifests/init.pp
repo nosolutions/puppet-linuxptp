@@ -28,6 +28,7 @@ class linuxptp(
   $logdir                      = '/var/log/linuxptp',
   $manage_sysconfig            = true,
   $manage_logrotate_rule       = true,
+  $message_tag                 = '',
 ) {
   package { $package_name:
     ensure => present,
@@ -67,6 +68,7 @@ class linuxptp(
       delay_mechanism             => $delay_mechanism,
       time_stamping               => $time_stamping,
       summary_interval            => $summary_interval,
+      message_tag                 => $message_tag,
       require                     => Package[$package_name],
     }
 
